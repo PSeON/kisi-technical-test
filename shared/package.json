@@ -1,0 +1,20 @@
+{
+  "name": "shared",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Kisi Technical Test - Shared Library",
+  "author": "Serhii Petkun <sergeypetkun@gmail.com>",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c && tsc --declaration --emitDeclarationOnly"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.23.2",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rollup": "^4.3.0",
+    "typescript": "^5.2.2"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "kisi-technical-test",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Kisi Technical Test",
+  "author": "Serhii Petkun <sergeypetkun@gmail.com>",
+  "license": "ISC",
+  "scripts": {},
+  "workspaces": [
+    "shared",
+    "client",
+    "server"
+  ],
+  "prettier": {
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "quoteProps": "as-needed",
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "arrowParens": "avoid",
+    "endOfLine": "lf"
+  }
+}

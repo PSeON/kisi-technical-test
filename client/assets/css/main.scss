@@ -1,0 +1,51 @@
+@import '~/assets/css/core.scss';
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: auto scroll;
+  background: $neutralDarkColor;
+  color: $neutralLightColor;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  cursor: default;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: normal;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+button,
+input[type='button'],
+input[type='reset'] input[type='submit'],
+.ButtonTheme {
+  padding: 7px 22px;
+  border: 0;
+  background: $primaryColor;
+  border-radius: 9999px;
+  color: $neutralLightColor;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background: $primaryDarkColor;
+  }
+}
