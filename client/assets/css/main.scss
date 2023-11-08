@@ -86,30 +86,30 @@ input[type='reset'] input[type='submit'],
 //
 // Some people like this approach, and some people don't. I find it useful during quick
 // prototyping or debugging.
-@each $orientationName, $orientationValue in ('col': 'column', 'row': 'row') {
-  .u-flex-#{$orientationName} {
-    display: flex;
-    flex-direction: #{$orientationValue};
-  }
+// @each $orientationName, $orientationValue in ('col': 'column', 'row': 'row') {
+//   .u-flex-#{$orientationName} {
+//     display: flex;
+//     flex-direction: #{$orientationValue};
+//   }
 
-  @each $alignName,
-    $alignValue
-      in (
-        'start': 'flex-start',
-        'end': 'flex-end',
-        'center': 'center',
-        'stretch': 'stretch',
-        'baseline': 'baseline'
-      )
-  {
-    @each $justifyName,
-      $justifyValue in ('start': 'flex-start', 'end': 'flex-end', 'center': 'center')
-    {
-      .u-flex-#{$orientationName}-#{$alignName}-#{$justifyName} {
-        @extend .u-flex-#{$orientationName};
-        align-items: #{$alignValue};
-        justify-content: #{$justifyValue};
-      }
-    }
-  }
-}
+//   @each $alignName,
+//     $alignValue
+//       in (
+//         'start': 'flex-start',
+//         'end': 'flex-end',
+//         'center': 'center',
+//         'stretch': 'stretch',
+//         'baseline': 'baseline'
+//       )
+//   {
+//     @each $justifyName,
+//       $justifyValue in ('start': 'flex-start', 'end': 'flex-end', 'center': 'center')
+//     {
+//       .u-flex-#{$orientationName}-#{$alignName}-#{$justifyName} {
+//         @extend .u-flex-#{$orientationName};
+//         align-items: #{$alignValue};
+//         justify-content: #{$justifyValue};
+//       }
+//     }
+//   }
+// }

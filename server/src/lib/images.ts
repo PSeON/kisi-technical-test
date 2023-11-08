@@ -45,3 +45,13 @@ export async function getAvailableFileName(ext: string) {
   }
   throw new Error("Can't find available file name");
 }
+
+export async function clearUploadedImages() {
+  const images = await fs.readdir(imagesPath);
+  await Promise.all(
+    images
+      .filter(image => image.startsWith('image90'))
+      .map(image => fs.rm(path.resolve(imagesPath, image))),
+  );
+  clearImagesCache();
+}

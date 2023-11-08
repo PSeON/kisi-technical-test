@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     '/image/**': { proxy: `${apiBase}image/**` },
     '/images': { proxy: `${apiBase}images` },
     '/uploadImage': { proxy: `${apiBase}uploadImage` },
+    '/clearImages': { proxy: `${apiBase}clearImages` },
   },
 
   css: ['~/assets/css/main.scss'],

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { uploadImage } from '~/composables/articles';
 import { delay } from 'shared';
 
 // Some changes can't be performed during SSR, so using this variable to check if
@@ -89,6 +88,23 @@ async function onFileSelected(formData: FormData) {
     uploadingImageProgress.value = 0;
   }
 }
+
+const clearImagesError = ref(false);
+
+async function onClearImages() {
+  showFullScreenLoader.value = true;
+  try {
+    await clearUploadedImages();
+    await articlesData.refresh();
+  } catch {
+    showFullScreenLoader.value = false;
+    clearImagesError.value = true;
+    await delay(10000);
+    clearImagesError.value = false;
+  } finally {
+    showFullScreenLoader.value = false;
+  }
+}
 </script>
 
 <template>
@@ -101,13 +117,13 @@ async function onFileSelected(formData: FormData) {
       <div v-if="isAlive" class="HomePage-popups">
         <TransitionGroup name="fadeBottom">
           <PopupFrame key="item1" v-if="articlesData.error.value">
-            <div class="u-flex-row-center-center">
+            <div class="HomePage-networkErrorPopup">
               <LoadingSpinner />
               &nbsp;Network error. Try to reconnect...
             </div>
           </PopupFrame>
           <PopupFrame key="item2" v-if="isUploadingImage">
-            <div class="u-flex-col-stretch-start">
+            <div class="HomePage-uploadImagePopup">
               Uploading image...
               <ProgressBar
                 :infinite="uploadingImageInfiniteProgress"
@@ -118,6 +134,9 @@ async function onFileSelected(formData: FormData) {
           </PopupFrame>
           <PopupFrame key="item3" v-if="uploadingImageError">
             Image upload failed. Please try again.
+          </PopupFrame>
+          <PopupFrame key="item4" v-if="clearImagesError">
+            Image removal failed. Please try again.
           </PopupFrame>
         </TransitionGroup>
       </div>
@@ -138,7 +157,16 @@ async function onFileSelected(formData: FormData) {
         :showUploadButton="index === articleChunks.length - 1"
         @uploadImage="onFileSelected"
       />
-      <!-- <button type="button" @click="articlesData.refresh()">Reload</button> -->
+      <div class="HomePage-footer">
+        <button
+          v-if="loadedArticles && loadedArticles.length > 7"
+          type="button"
+          @click="onClearImages"
+        >
+          Clear uploaded images
+        </button>
+        <!-- <button type="button" @click="articlesData.refresh()">Reload</button> -->
+      </div>
     </div>
   </PopupsLayout>
 </template>
@@ -153,6 +181,20 @@ async function onFileSelected(formData: FormData) {
   width: 50vw;
   padding: 8px;
   gap: 8px;
+}
+
+.HomePage-networkErrorPopup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.HomePage-uploadImagePopup {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
 .HomePage-container {
@@ -181,5 +223,12 @@ async function onFileSelected(formData: FormData) {
 .HomePage-uploadImageForm {
   position: fixed;
   display: none;
+}
+
+.HomePage-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 50px;
 }
 </style>

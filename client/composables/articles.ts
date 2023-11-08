@@ -30,3 +30,7 @@ export function uploadImage(
   request.send(formData);
   return promise;
 }
+
+export async function clearUploadedImages() {
+  await $fetch('/clearImages', { method: 'post' });
+}
