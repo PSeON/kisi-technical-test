@@ -7,7 +7,9 @@
   "license": "ISC",
   "scripts": {
     "lint": "prettier --check .",
-    "lintfix": "prettier --write ."
+    "lintfix": "prettier --write .",
+    "build": "npm run build --workspaces",
+    "run": "concurrently \"DATA_REPO=data-repo node server/dist/index.js\" \"HOST=0.0.0.0 PORT=8081 node client/.output/server/index.mjs\""
   },
   "workspaces": [
     "shared",
@@ -37,5 +39,8 @@
         ]
       }
     }
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
