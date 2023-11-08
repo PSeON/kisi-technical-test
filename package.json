@@ -9,7 +9,7 @@
     "lint": "prettier --check .",
     "lintfix": "prettier --write .",
     "build": "npm run build --workspaces",
-    "run": "concurrently \"DATA_REPO=data-repo node server/dist/index.js\" \"HOST=0.0.0.0 PORT=8081 node client/.output/server/index.mjs\""
+    "run": "concurrently \"DATA_REPO=data-repo HOST=localhost PORT=8080 node server/dist/index.js\" \"HOST=0.0.0.0 node client/.output/server/index.mjs\""
   },
   "workspaces": [
     "shared",
