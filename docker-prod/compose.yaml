@@ -1,0 +1,35 @@
+services:
+  backend:
+    image: kisi-test-backend
+    build:
+      context: ./..
+      dockerfile: docker-prod/DockerfileBackend
+    container_name: kisi-test-backend-app
+    hostname: kisi_backend
+    environment:
+      DATA_REPO: '/home/node/data-repo'
+      HOST: '0.0.0.0'
+      PORT: '8080'
+    expose:
+      - '8080'
+    volumes:
+      - type: bind
+        source: ../data-repo
+        target: /home/node/data-repo2
+
+  frontend:
+    image: kisi-test-frontend
+    build:
+      context: ./..
+      dockerfile: docker-prod/DockerfileFrontend
+      args:
+        API_BASE: 'http://kisi_backend:8080/'
+    container_name: kisi-test-frontend-app
+    hostname: kisi_frontend
+    depends_on:
+      - backend
+    environment:
+      HOST: '0.0.0.0'
+      PORT: '8080'
+    ports:
+      - '8080:8080'

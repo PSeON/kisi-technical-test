@@ -1,0 +1,23 @@
+FROM node:20.9.0-alpine3.18 as builder
+
+ARG API_BASE
+
+USER node
+
+COPY --chown=node:node . /home/node/app
+
+WORKDIR /home/node/app
+
+RUN npm install --workspaces \
+    && npm run build --workspace=shared --workspace=client
+
+
+FROM node:20.9.0-alpine3.18
+
+USER node
+
+COPY --from=builder --chown=node:node /home/node/app/client/.output /home/node/app
+
+WORKDIR /home/node/app
+
+ENTRYPOINT ["/usr/local/bin/node", "/home/node/app/server/index.mjs"]

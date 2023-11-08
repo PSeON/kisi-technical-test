@@ -16,6 +16,27 @@ app.use((req, res, next) => {
   next();
 });
 
-app.listen(port, host, () => {
+const server = app.listen(port, host, () => {
   console.log(`App is listening at http://${host}:${port}/`);
 });
+
+// Support gracefull stop
+const signals: Record<string, number> = {
+  SIGHUP: 1,
+  SIGINT: 2,
+  SIGTERM: 15,
+};
+
+function shutdown(signal: string, value: number) {
+  server.close(() => {
+    console.log(`Server stopped by ${signal} with value ${value}`);
+    process.exit(128 + value);
+  });
+}
+
+for (const signal in signals) {
+  process.on(signal, () => {
+    console.log(`Received a ${signal} signal`);
+    shutdown(signal, signals[signal]);
+  });
+}
