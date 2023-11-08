@@ -6,12 +6,35 @@ defineProps<{
 const slots = defineSlots<{
   default(props: { msg: string }): any;
 }>();
+
+const imageElement = ref(null);
+const imageLoaded = ref(false);
+
+onMounted(() => {
+  if (imageElement.value) {
+    const img = imageElement.value as HTMLImageElement;
+    if (img.complete) {
+      imageLoaded.value = true;
+    } else {
+      img.addEventListener('load', () => {
+        imageLoaded.value = true;
+      });
+    }
+  }
+});
 </script>
 
 <template>
   <div class="Card">
-    <!-- <img class="Card-imageSize" :src="props.backgroundImage" /> -->
+    <img
+      class="Card-imageSize u-imageLoader"
+      data-imgload-parent=".Card"
+      data-imgload-overlay=".Card-imageLoadingOverlay"
+      :src="backgroundImage"
+      ref="imageElement"
+    />
     <div class="Card-image" :style="{ backgroundImage: `url(${backgroundImage})` }"></div>
+    <div :class="{ 'Card-imageLoadingOverlay': true, 'm-hidden': imageLoaded }"></div>
     <div class="Card-imageOverlay"></div>
     <div class="Card-content">
       <h3>
@@ -48,18 +71,40 @@ const slots = defineSlots<{
   }
 
   > * {
+    position: relative;
     grid-column: 1;
     grid-row: 1;
   }
 }
 
 .Card-imageSize {
-  max-width: 100%;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .Card-image {
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.Card-imageLoadingOverlay {
+  background: linear-gradient(
+    to right,
+    $neutralDarkColor,
+    $primaryDarkColor 50vw,
+    $neutralDarkColor 100vw
+  );
+  background-attachment: fixed;
+  transition:
+    opacity 0.5s ease,
+    visibility 0.5s ease;
+  animation: CardLoading 1.2s linear infinite;
+
+  &.m-hidden {
+    visibility: hidden;
+    opacity: 0;
+  }
 }
 
 .Card-imageOverlay {
@@ -97,5 +142,14 @@ const slots = defineSlots<{
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@keyframes CardLoading {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 100vw;
+  }
 }
 </style>
