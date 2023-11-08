@@ -138,7 +138,7 @@ async function onFileSelected(formData: FormData) {
         :showUploadButton="index === articleChunks.length - 1"
         @uploadImage="onFileSelected"
       />
-      <button type="button" @click="articlesData.refresh()">Reload</button>
+      <!-- <button type="button" @click="articlesData.refresh()">Reload</button> -->
     </div>
   </PopupsLayout>
 </template>
