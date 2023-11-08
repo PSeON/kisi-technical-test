@@ -10,6 +10,8 @@ export const port =
 // Cache lifetime is 5 seconds
 export const cacheLifetime = 5000;
 
+export const articlesPath = '../data-repo/data/articles.json';
+
 export const imagesPath = '../data-repo/images/';
 
 export const imagesPublicPath = '/image';

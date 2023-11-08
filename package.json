@@ -5,7 +5,10 @@
   "description": "Kisi Technical Test",
   "author": "Serhii Petkun <sergeypetkun@gmail.com>",
   "license": "ISC",
-  "scripts": {},
+  "scripts": {
+    "lint": "prettier --check .",
+    "lintfix": "prettier --write ."
+  },
   "workspaces": [
     "shared",
     "client",
@@ -22,5 +25,17 @@
     "bracketSpacing": true,
     "arrowParens": "avoid",
     "endOfLine": "lf"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          "@babel/preset-typescript"
+        ],
+        "plugins": [
+          "@babel/plugin-transform-modules-commonjs"
+        ]
+      }
+    }
   }
 }
