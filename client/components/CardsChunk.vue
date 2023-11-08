@@ -4,7 +4,6 @@ import { type ImagesApiResponse } from 'shared';
 const props = defineProps<{
   chunk: ImagesApiResponse['articles'];
   showUploadButton?: boolean;
-  uploadButtonId?: string;
 }>();
 
 const emit = defineEmits<{

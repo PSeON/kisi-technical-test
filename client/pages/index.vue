@@ -1,7 +1,39 @@
 <script setup lang="ts">
-const articlesData = await useArticles();
+import { uploadImage } from '~/composables/articles';
+import { delay } from 'shared';
 
-const loadedArticles = computed(() => articlesData.data.value?.articles);
+// Some changes can't be performed during SSR, so using this variable to check if
+// current component is "alive"
+const isAlive = ref(false);
+
+onMounted(() => {
+  isAlive.value = true;
+  if (articlesData.error.value) {
+    articlesData.refresh();
+  }
+  watch(articlesData.status, async newValue => {
+    if (isAlive && newValue === 'error') {
+      await delay(1000);
+      articlesData.refresh();
+    }
+  });
+});
+
+onUnmounted(() => {
+  isAlive.value = false;
+});
+
+const showFullScreenLoader = ref(false);
+
+const articlesData = await fetchArticles();
+
+const loadedArticles = ref(articlesData.data.value?.articles);
+
+watch(articlesData.data, newValue => {
+  if (newValue) {
+    loadedArticles.value = newValue.articles;
+  }
+});
 
 const firstArticle = computed(() => loadedArticles.value && loadedArticles.value[0]);
 const secondArticle = computed(() => loadedArticles.value && loadedArticles.value[1]);
@@ -25,41 +57,72 @@ const articleChunks = computed(() => {
   return result;
 });
 
-const uploadForm = ref(null);
-const inputFieldId = ref(`id${Math.round(Math.random() * 10000)}`);
+const isUploadingImage = ref(false);
+const uploadingImageProgress = ref(0);
+const uploadingImageInfiniteProgress = ref(false);
+const uploadingImageError = ref(false);
 
-function onFileSelected(formData: FormData) {
-  // if (!uploadForm.value) {
-  //   return;
-  // }
-  // const form = uploadForm.value as HTMLFormElement;
-  // const formData = new FormData(form);
-  const request = new XMLHttpRequest();
-  request.addEventListener('error', () => {
-    console.log('readyState', request.readyState);
-    alert('error');
-  });
-  request.addEventListener('load', () => {
-    console.log('readyState', request.readyState);
-    console.log('status', request.status);
+async function onFileSelected(formData: FormData) {
+  if (isUploadingImage.value) {
+    return;
+  }
+  isUploadingImage.value = true;
+  try {
+    await uploadImage(formData, progress => {
+      if (progress === null) {
+        uploadingImageProgress.value = 0;
+        uploadingImageInfiniteProgress.value = true;
+      } else {
+        uploadingImageProgress.value = progress;
+        uploadingImageInfiniteProgress.value = false;
+      }
+    });
     articlesData.refresh();
-  });
-  request.upload.addEventListener('progress', event => {
-    if (event.lengthComputable) {
-      const percentComplete = (event.loaded / event.total) * 100;
-      console.log('Upload', percentComplete);
-    }
-  });
-  request.open('POST', '/uploadImage');
-  request.send(formData);
-  // form.reset();
+  } catch (e) {
+    isUploadingImage.value = false;
+    uploadingImageError.value = true;
+    await delay(10000);
+    uploadingImageError.value = false;
+  } finally {
+    isUploadingImage.value = false;
+    await delay(500);
+    uploadingImageProgress.value = 0;
+  }
 }
 </script>
 
 <template>
-  <div class="HomePage-container">
-    <template v-if="!loadedArticles">Loading data...</template>
-    <template v-else>
+  <PopupsLayout
+    :showFullScreenLoader="
+      isAlive && !articlesData.error.value && (showFullScreenLoader || articlesData.pending.value)
+    "
+  >
+    <template v-slot:topRight>
+      <div v-if="isAlive" class="HomePage-popups">
+        <TransitionGroup name="fadeBottom">
+          <PopupFrame key="item1" v-if="articlesData.error.value">
+            <div class="u-flex-row-center-center">
+              <LoadingSpinner />
+              &nbsp;Network error. Try to reconnect...
+            </div>
+          </PopupFrame>
+          <PopupFrame key="item2" v-if="isUploadingImage">
+            <div class="u-flex-col-stretch-start">
+              Uploading image...
+              <ProgressBar
+                :infinite="uploadingImageInfiniteProgress"
+                :value="uploadingImageProgress"
+                :maxValue="1"
+              />
+            </div>
+          </PopupFrame>
+          <PopupFrame key="item3" v-if="uploadingImageError">
+            Image upload failed. Please try again.
+          </PopupFrame>
+        </TransitionGroup>
+      </div>
+    </template>
+    <div v-if="loadedArticles" class="HomePage-container">
       <HeroLayout>
         <template v-slot:column1>
           <h1 class="HomePage-hero-title">Connect people & spaces</h1>
@@ -73,16 +136,24 @@ function onFileSelected(formData: FormData) {
         v-for="(chunk, index) in articleChunks"
         :chunk="chunk"
         :showUploadButton="index === articleChunks.length - 1"
-        :uploadButtonId="inputFieldId"
         @uploadImage="onFileSelected"
       />
-      <button type="button" @click="() => articlesData.refresh()">Reload</button>
-    </template>
-  </div>
+      <button type="button" @click="articlesData.refresh()">Reload</button>
+    </div>
+  </PopupsLayout>
 </template>
 
 <style scoped lang="scss">
 @import '~/assets/css/core.scss';
+
+.HomePage-popups {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 50vw;
+  padding: 8px;
+  gap: 8px;
+}
 
 .HomePage-container {
   display: flex;

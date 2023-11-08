@@ -42,10 +42,74 @@ input[type='reset'] input[type='submit'],
   border-radius: 9999px;
   color: $neutralLightColor;
   font-size: 17px;
+  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.3s;
 
   &:hover {
     background: $primaryDarkColor;
+  }
+}
+
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fadeBottom-move,
+.fadeBottom-enter-active,
+.fadeBottom-leave-active {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.fadeBottom-leave-active {
+  position: absolute;
+}
+
+.fadeBottom-enter-from,
+.fadeBottom-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+// Be careful with these, every loop makes CSS size grow exponentially.
+//
+// Some people like this approach, and some people don't. I find it useful during quick
+// prototyping or debugging.
+@each $orientationName, $orientationValue in ('col': 'column', 'row': 'row') {
+  .u-flex-#{$orientationName} {
+    display: flex;
+    flex-direction: #{$orientationValue};
+  }
+
+  @each $alignName,
+    $alignValue
+      in (
+        'start': 'flex-start',
+        'end': 'flex-end',
+        'center': 'center',
+        'stretch': 'stretch',
+        'baseline': 'baseline'
+      )
+  {
+    @each $justifyName,
+      $justifyValue in ('start': 'flex-start', 'end': 'flex-end', 'center': 'center')
+    {
+      .u-flex-#{$orientationName}-#{$alignName}-#{$justifyName} {
+        @extend .u-flex-#{$orientationName};
+        align-items: #{$alignValue};
+        justify-content: #{$justifyValue};
+      }
+    }
   }
 }
