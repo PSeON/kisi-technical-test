@@ -15,7 +15,7 @@ npm run build
 npm run run
 ```
 
-The navigate to http://localhost:3000/ to see it.
+Then navigate to http://localhost:3000/ to see it.
 
 I also added Docker configuration to build apps and prepare them for
 deployment to Docker-based environments, but they are not used at the moment.
@@ -31,7 +31,7 @@ Project consists of three parts:
 This one is located in `client` folder.
 
 For this app I use Nuxt v3 in SSR mode (the most complicated mode, but giving
-a noticeable performance boost). Styles are written in SCSS language.
+a noticeable performance boost). Styles are scoped and written in SCSS language.
 
 I put some effort to make UX comfortable:
 
@@ -45,7 +45,7 @@ I put some effort to make UX comfortable:
 - When data loading fails, "Network error" message is shown in the corner, and
   app periodically retries to load the data.
 - Same for image upload errors, but no retries are done in this case.
-- Custom error pages created instead of using default ones, to keep same
+- Custom error pages created instead of using default ones, to keep consistent
   theme.
 
 ### Server app
